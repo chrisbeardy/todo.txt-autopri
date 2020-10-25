@@ -18,4 +18,4 @@ shift
 
 [ "$action" = "autopri" ] && {
     python3 $(dirname $0)/autopri.py "$TODO_FILE" $days $pri
-}    
+}

@@ -18,7 +18,7 @@ def main(todo_file, days=1, pri="A"):
     Argument: days (default: 1)
         Number of days in advance of due date to be considered for reprioritising
     Argument: pri (default: "A")
-        Priority to make tasks that need reprioritising
+        Priority to make tasks that need repriroritising
     """
     days = int(days)
     tasks_with_due_date = []
@@ -36,47 +36,23 @@ def main(todo_file, days=1, pri="A"):
 
             if match:
                 date = datetime.strptime(match[0], "%Y-%m-%d").date()
-                tasks_with_due_date.append((i+1, task, date))
+                tasks_with_due_date.append((i, task, date))
 
-    # only non completed tasks
-    non_complete_tasks_with_due_date = []
-    for task in tasks_with_due_date:
-        if (task[1][0] == "x") and (task[1][1] == " "):
-            continue
-        non_complete_tasks_with_due_date.append(task)
-
-    # get tasks within set days
+    # get taks within set days
     tasks_within_days = []
-    for task in non_complete_tasks_with_due_date:
+    for task in tasks_with_due_date:
         if task[2] < datetime.today().date() + timedelta(days+1):
             tasks_within_days.append(task)
-
-    # get tasks within priority
-    tasks_within_pri = []
-    for task in tasks_within_days:
-        if (task[1][0] != "(") or (task[1][2] != ")"):
-            tasks_within_pri.append(task)
-            continue
-        task_pri = task[1][1]
-        if not str.isalpha(task_pri):
-            tasks_within_pri.append(task)
-            continue
-        if str.islower(task_pri):
-            tasks_within_pri.append(task)
-            continue
-        if task_pri > pri:
-            tasks_within_pri.append(task)
-            continue
 
     # basic output
     tasks_to_print = []
     zero_pad = int(math.log10(len(content))) + 1
-    for task in tasks_within_pri:
-        tasks_to_print.append(str(task[0]).zfill(zero_pad) + " " + task[1])
+    for task in tasks_within_days:
+        tasks_to_print.append(str(task[0] + 1).zfill(zero_pad) + " " + task[1])
     # Print to console
     if len(tasks_to_print) > 0:
         print("\n===================================")
-        print("Tasks within pri:")
+        print("Tasks within days:")
         print("===================================")
         for task in tasks_to_print:
             print(task)

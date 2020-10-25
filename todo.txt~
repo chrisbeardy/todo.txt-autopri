@@ -1,5 +1,5 @@
 2020-06-07 look at creating new todo.txt app @home +todo.txt see Joplin note
-(B) 2020-06-07 setup pihole @home due:2020-10-06
+(A) 2020-06-07 setup pihole @home due:2020-10-06
 2020-06-07 3d printer setup @home +3dprinter
 2020-06-07 get gutters cleared @home
 2020-06-07 buy cover for boiler outside @home note:d0a.md
@@ -71,8 +71,8 @@
 (B) 2020-09-22 look at automation interface for +1688F @work
 (B) 2020-09-22 write down entire process of commissiing for stores modules, so can be reproduced/automated +1688F @work
 2020-09-24 https://novasquirrel.itch.io/nova-the-squirrel download @home
-(C) 2020-09-24 Check breakdown cancelled  @home due:2020-10-30
-2020-09-25 create pull request on +pyads @home to fix doc issues for no py2 due:2020-10-27 note:nkZ.md
+2020-09-24 Check breakdown cancelled  @home due:2020-10-06
+2020-09-25 create pull request on +pyads @home to fix doc issues for no py2 due:2020-10-4 note:nkZ.md
 2020-10-01 Change busy flag of handshake to 0-100 to signify level of doneness, the actual meaning will spend on the action  @work +1753A
 2020-10-02 update personal log t:2020-10-09 due:2020-10-09 again:+7 @work +general  
 2020-10-03 check with LH about fin homing, is this pos? @work +1753A
