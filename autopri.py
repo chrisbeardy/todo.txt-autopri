@@ -93,7 +93,12 @@ def main(todo_file, todo_full_sh, days=1, pri="A", list_tasks=False):
 if __name__ == "__main__":
     # check all inputs as expected and pass to main script
     try:
-        opts, args = getopt.gnu_getopt(sys.argv[1:], "l")
+        opts, args_ = getopt.gnu_getopt(sys.argv[1:], "l")
+        # cover the case where blank strings are passed in by .sh files
+        args = []
+        for arg in args_:
+            if len(arg) > 0:
+                args.append(arg)
         list_tasks = False
         if len(opts) > 0:
             list_tasks = True
