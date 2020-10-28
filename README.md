@@ -45,4 +45,4 @@ Please feel free to submit a PR for improvements.
 
 ## Thanks
 
-Special thanks goes to the authors of the [due](https://github.com/rebeccamorgan/due) todo.txt addon whose python script I used as aid for how filter the inputs and get the tasks in the date range.
+Special thanks goes to the authors of the [due](https://github.com/rebeccamorgan/due) todo.txt addon whose python script I used as inspiration.

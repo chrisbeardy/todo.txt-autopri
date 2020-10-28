@@ -1,24 +1,26 @@
 #!/usr/bin/env python3
 import os
 import sys
+import getopt
 import math
 from datetime import datetime, timedelta
 import re
 
-# for finding if a priority
-# match = re.search(r"\s\(([A-Z])\)\s", task)
 
-
-def main(todo_file, days=1, pri="A"):
+def main(todo_file, todo_full_sh, days=1, pri="A", list_tasks=False):
     """
     Reprioritise tasks to **pri** if current date is **days** before due date.
     Will not reprioritise tasks if they are already higher priority than **pri**.
     Argument: todo_file
         The path to the todo.txt file
+    Argument: todo_full_sh
+        The path to the todo.sh file
     Argument: days (default: 1)
         Number of days in advance of due date to be considered for reprioritising
     Argument: pri (default: "A")
         Priority to make tasks that need reprioritising
+    Argument: list_tasks (default: False)
+        If True, lists tasks and asks for confirmation before reprioritising
     """
     days = int(days)
     tasks_with_due_date = []
@@ -32,6 +34,7 @@ def main(todo_file, days=1, pri="A"):
         due_key = os.getenv("TODO_TXT_DUE_KEY", "due")
 
         for i, task in enumerate(content):
+            task = task.replace("\n", "")
             match = re.findall(r"%s:(\d{4}-\d{2}-\d{2})" % due_key, task)
 
             if match:
@@ -54,69 +57,95 @@ def main(todo_file, days=1, pri="A"):
     # get tasks within priority
     tasks_within_pri = []
     for task in tasks_within_days:
-        if (task[1][0] != "(") or (task[1][2] != ")"):
+        match = re.search(r"\(([A-Z])\)\s", task[1])
+        if not match:
             tasks_within_pri.append(task)
-            continue
-        task_pri = task[1][1]
-        if not str.isalpha(task_pri):
-            tasks_within_pri.append(task)
-            continue
-        if str.islower(task_pri):
-            tasks_within_pri.append(task)
-            continue
-        if task_pri > pri:
-            tasks_within_pri.append(task)
-            continue
+        else:
+            task_pri = task[1][1]
+            if task_pri > pri:
+                tasks_within_pri.append(task)
 
-    # basic output
-    tasks_to_print = []
-    zero_pad = int(math.log10(len(content))) + 1
-    for task in tasks_within_pri:
-        tasks_to_print.append(str(task[0]).zfill(zero_pad) + " " + task[1])
-    # Print to console
-    if len(tasks_to_print) > 0:
-        print("\n===================================")
-        print("Tasks within pri:")
-        print("===================================")
-        for task in tasks_to_print:
-            print(task)
+    repri_tasks = True
+    if list_tasks:
+        tasks_to_print = []
+        zero_pad = int(math.log10(len(content))) + 1
+        for task in tasks_within_pri:
+            tasks_to_print.append(str(task[0]).zfill(zero_pad) + " " + task[1])
+        # Print to console
+        if len(tasks_to_print) > 0:
+            print("Tasks to reprioritise")
+            print("=====================\n")
+            for task in tasks_to_print:
+                print(task)
+        while True:
+            user_input = input("\nReprioritise tasks?(y/n)")
+            if user_input == "y":
+                break
+            if user_input == "n":
+                repri_tasks = False
+                break
+
+    if repri_tasks:
+        for task in tasks_within_pri:
+            os.system(todo_full_sh + " pri " + str(task[0]) + " " + pri)
 
 
 if __name__ == "__main__":
     # check all inputs as expected and pass to main script
-    if (len(sys.argv) < 2) or (len(sys.argv) > 4):
-        print("Usage: autopri.py [TODO_FILE] <days> <priority>")
+    try:
+        opts, args = getopt.gnu_getopt(sys.argv[1:], "l")
+        list_tasks = False
+        if len(opts) > 0:
+            list_tasks = True
+    except getopt.GetoptError:
+        print("Error: option not valid")
+        print("Usage: autopri.py -l [TODO_FILE] <days> <priority>")
         sys.exit(1)
 
-    if not os.path.isfile(sys.argv[1]):
-        print(f"Error: {sys.argv[1]} is not a file")
+    if (len(args) < 2) or (len(args) > 4):
+        print("Error: wrong number of parameters given")
+        print("Usage: autopri.py -l [TODO_FILE] <days> <priority>")
         sys.exit(1)
 
-    if len(sys.argv) == 4:
-        if not str.isdigit(sys.argv[2]):
-            print(f"Error: days argument '{sys.argv[2]}' is not an integer")
+    if not os.path.isfile(args[0]):
+        print(f"Error: todo file argument {args[0]} is not a file")
+        print("Usage: autopri.py -l [TODO_FILE] <days> <priority>")
+        sys.exit(1)
+
+    if not os.path.isfile(args[1]):
+        print(f"Error: todo.sh path argument {args[1]} is not a file")
+        print("Usage: autopri.py -l [TODO_FILE] <days> <priority>")
+        sys.exit(1)
+
+    if len(args) == 4:
+        if not str.isdigit(args[2]):
+            print(f"Error: days argument '{args[2]}' is not an integer")
+            print("Usage: autopri.py -l [TODO_FILE] <days> <priority>")
             sys.exit(1)
-        if len(sys.argv[3]) > 1:
-            print(f"Error: priority argument '{sys.argv[3]}' should only be one letter")
+        if len(args[3]) > 1:
+            print(f"Error: priority argument '{args[3]}' should only be one letter")
+            print("Usage: autopri.py -l [TODO_FILE] <days> <priority>")
             sys.exit(1)
-        if not str.isalpha(sys.argv[3]):
-            print(f"Error: priority argument '{sys.argv[3]}' is not a letter")
+        if not str.isalpha(args[3]):
+            print(f"Error: priority argument '{args[3]}' is not a letter")
+            print("Usage: autopri.py -l [TODO_FILE] <days> <priority>")
             sys.exit(1)
 
-        main(sys.argv[1], sys.argv[2], sys.argv[3])
+        main(args[0], args[1], args[2], args[3], list_tasks)
         sys.exit(0)
 
-    if len(sys.argv) == 3:
-        if not str.isdigit(sys.argv[2]) and (len(sys.argv[2]) > 1):
-            print(f"Error: priority argument '{sys.argv[2]}' should only be one letter")
+    if len(args) == 3:
+        if not str.isdigit(args[2]) and (len(args[2]) > 1):
+            print(f"Error: priority argument '{args[2]}' should only be one letter")
+            print("Usage: autopri.py -l [TODO_FILE] <days> <priority>")
             sys.exit(1)
 
-        if str.isalpha(sys.argv[2]) and (len(sys.argv[2]) == 1):
-            main(sys.argv[1], pri=sys.argv[2])
+        if str.isalpha(args[2]) and (len(args[2]) == 1):
+            main(args[0], args[1], pri=args[2], list_tasks=list_tasks)
             sys.exit(0)
 
-        if str.isdigit(sys.argv[2]):
-            main(sys.argv[1], days=sys.argv[2])
+        if str.isdigit(args[2]):
+            main(args[0], args[1], days=args[2], list_tasks=list_tasks)
             sys.exit(0)
 
-    main(sys.argv[1])
+    main(args[0], args[1], list_tasks=list_tasks)
