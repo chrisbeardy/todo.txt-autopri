@@ -1,0 +1,21 @@
+#!/bin/bash
+
+action=$1
+days=$2
+pri=$3
+shift
+
+[ "$action" = "usage" ] && {
+    echo "    autopri [days, priority]"
+    echo "      Auto prioritise tasks based on number of days till due"
+    echo "        days"
+    echo "          Optional argument (integer n), overrides default number of days"
+    echo "        priority"
+    echo "          Optional argument (letter A-Z), overides default priority"
+    echo ""
+    exit
+}
+
+[ "$action" = "autopri" ] && {
+    python3 $(dirname $0)/autopri.py "$TODO_FILE" "$TODO_FULL_SH" "$days" "$pri"
+}
