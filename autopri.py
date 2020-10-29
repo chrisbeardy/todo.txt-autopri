@@ -93,7 +93,7 @@ def main(todo_file, todo_full_sh, days=1, pri="A", list_tasks=False):
 if __name__ == "__main__":
     # check all inputs as expected and pass to main script
     try:
-        opts, args_ = getopt.gnu_getopt(sys.argv[1:], "l")
+        opts, args_ = getopt.gnu_getopt(sys.argv[1:], "l", ["list"])
         # cover the case where blank strings are passed in by .sh files
         args = []
         for arg in args_:
