@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+"""
+A todo.sh addon for auto-prioritising tasks X days before they are due.
+By default it will prioritise tasks that are due for the current day
+or the next day to priority A.
+
+This script should be called by the autopri bash script which passes in the
+required arguments of the `main` function.
+"""
 import os
 import sys
 import getopt
@@ -93,47 +101,42 @@ def main(todo_file, todo_full_sh, days=1, pri="A", list_tasks=False):
 if __name__ == "__main__":
     # check all inputs as expected and pass to main script
     try:
-        opts, args_ = getopt.gnu_getopt(sys.argv[1:], "l", ["list"])
-        # cover the case where blank strings are passed in by .sh files
-        args = []
-        for arg in args_:
-            if len(arg) > 0:
-                args.append(arg)
+        opts, args = getopt.gnu_getopt(sys.argv[1:], "l", ["list"])
         list_tasks = False
         if len(opts) > 0:
             list_tasks = True
     except getopt.GetoptError:
         print("Error: option not valid")
-        print("Usage: autopri.py -l [TODO_FILE] <days> <priority>")
+        print("Usage: todo.sh -l <days> <priority>")
         sys.exit(1)
 
     if (len(args) < 2) or (len(args) > 4):
         print("Error: wrong number of parameters given")
-        print("Usage: autopri.py -l [TODO_FILE] <days> <priority>")
+        print("Usage: todo.sh -l <days> <priority>")
         sys.exit(1)
 
     if not os.path.isfile(args[0]):
         print(f"Error: todo file argument {args[0]} is not a file")
-        print("Usage: autopri.py -l [TODO_FILE] <days> <priority>")
+        print("Usage: autopri.py -l [TODO_FILE] [TODO_FULL_SH] <days> <priority>")
         sys.exit(1)
 
     if not os.path.isfile(args[1]):
         print(f"Error: todo.sh path argument {args[1]} is not a file")
-        print("Usage: autopri.py -l [TODO_FILE] <days> <priority>")
+        print("Usage: autopri.py -l [TODO_FILE] [TODO_FULL_SH] <days> <priority>")
         sys.exit(1)
 
     if len(args) == 4:
         if not str.isdigit(args[2]):
             print(f"Error: days argument '{args[2]}' is not an integer")
-            print("Usage: autopri.py -l [TODO_FILE] <days> <priority>")
+            print("Usage: todo.sh -l <days> <priority>")
             sys.exit(1)
         if len(args[3]) > 1:
             print(f"Error: priority argument '{args[3]}' should only be one letter")
-            print("Usage: autopri.py -l [TODO_FILE] <days> <priority>")
+            print("Usage: todo.sh -l <days> <priority>")
             sys.exit(1)
         if not str.isalpha(args[3]):
             print(f"Error: priority argument '{args[3]}' is not a letter")
-            print("Usage: autopri.py -l [TODO_FILE] <days> <priority>")
+            print("Usage: todo.sh -l <days> <priority>")
             sys.exit(1)
 
         main(args[0], args[1], args[2], args[3], list_tasks)
@@ -142,7 +145,7 @@ if __name__ == "__main__":
     if len(args) == 3:
         if not str.isdigit(args[2]) and (len(args[2]) > 1):
             print(f"Error: priority argument '{args[2]}' should only be one letter")
-            print("Usage: autopri.py -l [TODO_FILE] <days> <priority>")
+            print("Usage: todo.sh -l <days> <priority>")
             sys.exit(1)
 
         if str.isalpha(args[2]) and (len(args[2]) == 1):
