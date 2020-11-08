@@ -17,27 +17,32 @@ It can be useful to set the command to run on shell startup or on a @daily cron 
 
 ## Usage
 
-*To auto-prioritise tasks based with the default parameters:*
+To auto-prioritise tasks based with the default parameters:
 
 `todo.sh autopri`
 
-*Changing the number of days:*
+Changing the number of days:
 
 The following will auto-prioritise tasks that are due in 3 days time to priority A:
 
 `todo.sh autopri 3`
 
-*Changing the priority:*
+Changing the priority:
 
 The following will auto-prioritise tasks that are due on the current day or in a days time to priority C:
 
 `todo.sh autopri C`
 
-*Changing both the number of days and the priority:*
+Changing both the number of days and the priority:
 
 The following will auto-prioritise tasks that are due in 3 days time to priority C:
 
 `todo.sh autopri 3 C`
+
+List option:
+
+The list option `-l` | `--list` can be used to list the items that will be reprioritised and prompt
+for confirmation.
 
 ## Contributing
 
